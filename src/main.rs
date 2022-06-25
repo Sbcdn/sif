@@ -16,6 +16,10 @@ fn do_handshake(magic : u64 , mut channel: pallas_multiplexer::StdChannelBuffer)
 
 fn main() {
     env_logger::builder().filter_level(log::LevelFilter::Info).init();
+    
+    
+    std::env::set_var("TXGSET", "txgmempool");
+
 
     //    /home/tp/Downloads/cardano-node-1.35.0/testnode.socket
     let socket = std::env::var("CARDANO_NODE_SOCKET_PATH").expect("Could not find env CARDANO_NODE_SOCKET_PATH");
