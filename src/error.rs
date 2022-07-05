@@ -24,9 +24,6 @@ impl Error for SifError {
     }
 }
 
-unsafe impl Send for SifError {}
-unsafe impl Sync for SifError {}
-
 impl From<hex::FromHexError> for SifError {
     fn from(err: hex::FromHexError) -> Self {
         SifError::new(&err.to_string())
@@ -50,3 +47,16 @@ impl From<minreq::Error> for SifError {
         SifError::new(&err.to_string())
     }
 }
+
+impl From<std::io::Error> for SifError {
+    fn from(err: std::io::Error) -> Self {
+        SifError::new(&err.to_string())
+    }
+}
+
+impl From<serde_json::Error> for SifError {
+    fn from(err: serde_json::Error) -> Self {
+        SifError::new(&err.to_string())
+    }
+}
+

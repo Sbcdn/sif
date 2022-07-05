@@ -13,11 +13,23 @@ impl LMPTX {
     pub fn get_utxos(&self) -> &Vec::<UTxO> {
         &self.1
     }
-
     pub fn new(txh : PendingTxHash, u : Vec::<UTxO>) -> Self {
         LMPTX(txh,u)
     }
+}
 
+#[derive(Serialize, Deserialize,Debug,Clone)]
+pub struct LocalMempoolTransaction {
+    hash : String, 
+    cbor : String,
+}
+impl LocalMempoolTransaction {
+    pub fn new(hash: String, cbor: String) -> Self {
+        LocalMempoolTransaction {
+            hash,
+            cbor
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize,Debug,Clone)]
