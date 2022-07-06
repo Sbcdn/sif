@@ -11,7 +11,7 @@ We will create 3 files:
 - sif.service # the systemd service which governs sif 
 
 
-Please note that all files are contained in this directory of the repo, and need a small amount of editing to work on your system. Specifically, always change <YOUR USER NAME> to your actual user name on your system.
+Please note that all files are contained in this directory of the repo, and need a small amount of editing to work on your system. Specifically, always change "<YOUR USER NAME>" to your actual user name on your system.
   
 Lastly, please note that standard systemctl commands should be used:
 
