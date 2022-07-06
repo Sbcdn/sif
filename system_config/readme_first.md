@@ -1,9 +1,8 @@
-In this directory (system_config) are a couple of steps to allow systemd to run sif in autonomy. Prerquisites:
+In this directory (system_config) are a couple of steps to allow systemd to run sif in autonomy. 
 
-tmux
+Prerequisites:
 
-
-How it works:
+- tmux
 
 We will create 3 files:
 
@@ -14,4 +13,11 @@ We will create 3 files:
 
 Please note that all files are contained in this directory of the repo, and need a small amount of editing to work on your system. Specifically, always change <YOUR USER NAME> to your actual user name on your system.
   
+Lastly, please note that standard systemctl commands should be used:
+
+- systemctl enable #this will enable the specified service (requires sudo)
+- systemctl daemon-reload #this will be required to load your new service and timer (requires sudo) 
   
+More information about systemd and its behaviour at startup:
+  
+https://opensource.com/article/20/5/systemd-startup
