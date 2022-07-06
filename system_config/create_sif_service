@@ -1,0 +1,32 @@
+#temporary systemd service file
+
+cat <<'ENDFILE' >> /tmp/sif.service
+[Unit]
+Description=Cardano Mempool Torben Drasil API
+After=network-online.target
+
+[Service]
+Type=forking
+Restart=on-failure
+RestartSec=10
+User=<YOUR USER NAME>
+ExecStart=/usr/bin/tmux new -d -s mempool
+ExecStartPost=/usr/bin/tmux send-keys -t mempool /home/<YOUR USER NAME>/sif_wd/sif_start.sh Enter
+SuccessExitStatus=143
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sif_mempool
+TimeoutStopSec=2
+KillMode=mixed
+
+[Install]
+WantedBy=multi-user.target
+ENDFILE
+
+
+# put service file in systemd space
+
+sudo mv /tmp/sif.service /etc/systemd/system/
+
+#this should be disabled by default
+#it will be triggered by sif.timer (created separately)

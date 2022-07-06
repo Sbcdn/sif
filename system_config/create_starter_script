@@ -1,0 +1,10 @@
+# create a WD for your sif files
+
+sudo mkdir -m777 /sif_wd
+
+# create startup script
+
+cat <<'ENDFILE' >> sif_wd/sif_start.sh
+cd /home/<YOUR USER NAME>
+./sif enter
+ENDFILE

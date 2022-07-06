@@ -1,0 +1,19 @@
+#for further information regarding systemd timers please refer to:
+#https://sleeplessbeastie.eu/2022/04/04/how-to-delay-the-start-of-the-systemd-service/
+
+#this creates a timer which takes the same name as the service it triggers 
+# in our case (sif)
+# the timer is set to trigger the service after 8minutes of reboot
+# this delay should allow plenty of time for cardano-node to come online (adjust timer if needed)
+
+cat <<EOF | sudo tee /etc/systemd/system/sif.timer
+[Unit]
+Description=Timer for the sif service
+
+[Timer]
+OnBootSec=8min
+
+[Install]
+WantedBy=timers.target
+EOF
+
