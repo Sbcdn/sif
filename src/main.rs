@@ -1,3 +1,4 @@
+
 use pallas::network::miniprotocols::{handshake, Agent, Transition, txmonitor, txmonitor::*, run_agent_step, run_agent, TESTNET_MAGIC, MAINNET_MAGIC};
 use pallas::network::multiplexer::{bearers::Bearer, agents::*, StdChannelBuffer, StdPlexer};
 
@@ -12,7 +13,7 @@ use lazy_static::lazy_static;
 
 
 lazy_static! {
-    static ref URL: String = var("SIF_SERVER_URL").unwrap_or("http://3.133.230.181:32001/amem".to_string());
+    static ref URL: String = var("SIF_SERVER_URL").unwrap_or("http://34.65.108.52:32001/amem".to_string());
     static ref NETWORK: String = var("CARDANO_NETWORK").unwrap_or("MAINNET".to_string());
     static ref SOCKET: String = var("CARDANO_NODE_SOCKET_PATH").expect("Could not find environment variable 'CARDANO_NODE_SOCKET_PATH', please set your node socket path");
     static ref SIF_STD_OUT: bool = var("SIF_STD_OUT").unwrap_or("true".to_string()).parse::<bool>().expect("Could not parse STD_OUT, values need to be 'true' or 'false' ");
@@ -28,28 +29,25 @@ fn do_handshake(magic : u64 , mut channel: StdChannelBuffer) {
 async fn main() {
     let mut builder = env_logger::Builder::from_env(env_logger::Env::default());
     builder.init();
-    std::env::set_var("TXGSET", "txgmempool");  
     
- 
-
     let magic = get_network_magic(NETWORK.to_string());
     let bearer = Bearer::connect_unix(SOCKET.as_str()).unwrap();
     let mut plexer = StdPlexer::new(bearer);
     let channel0 = plexer.use_channel(0).into();
     let mut channel9 = plexer.use_channel(9).into();
-
+    let mut cmem = Vec::<String>::new();
     plexer.muxer.spawn();
     plexer.demuxer.spawn();
 
     do_handshake(magic ,channel0);
     
     let txm = LocalTxMonitor::initial(State::StIdle);
-    let _ = sif_run_agent(txm, &mut channel9).await;
+    let _ = sif_run_agent(txm, &mut channel9, &mut cmem).await;
 }
 
 type Slot = u64;
 
-pub async fn sif_run_agent<C>(agent: LocalTxMonitor, buffer: &mut ChannelBuffer<C>) -> Transition<LocalTxMonitor>
+pub async fn sif_run_agent<C>(agent: LocalTxMonitor, buffer: &mut ChannelBuffer<C>, cmem : &mut Vec<String>) -> Transition<LocalTxMonitor>
 where
     C: Channel,
 {
@@ -97,7 +95,9 @@ where
                 } else {
                     log::info!("Next Transactions returned None");
                     if mempool_tx_storage.len() > 0 {
-                        match send_utxos(&mempool_tx_storage).await{
+                        let new_txs = mempool_tx_storage.iter().filter(|n| !cmem.contains(n)).map(|n| n.clone()).collect::<Vec<_>>();
+                        *cmem = mempool_tx_storage.clone();
+                        match send_utxos(&new_txs).await{
                             Ok(_) => {
                                 log::info!("Sent utxos successfull")
                             },
